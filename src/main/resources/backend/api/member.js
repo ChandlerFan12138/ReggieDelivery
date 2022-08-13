@@ -8,11 +8,11 @@ function getMemberList (params) {
 
 // 修改---启用禁用接口
 function enableOrDisableEmployee (params) {
-  return $axios({
-    url: '/employee',
-    method: 'put',
-    data: { ...params }
-  })
+    return $axios({
+      url: '/employee',
+      method: 'put',
+      data: { ...params }
+    })
 }
 
 // 新增---添加员工

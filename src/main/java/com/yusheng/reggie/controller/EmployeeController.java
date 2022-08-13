@@ -104,4 +104,16 @@ public class EmployeeController {
 
         return R.success(pageInfo);
     }
+
+    /*modify the status according to the id*/
+    @PutMapping
+    public R<String> update(HttpServletRequest request, @RequestBody Employee employee){
+
+        Long empId = (Long)request.getSession().getAttribute("employee");
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(empId);
+        employeeService.updateById(employee);
+        return R.success("The information has been modified successfully");
+    }
+
 }
