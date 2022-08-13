@@ -115,5 +115,16 @@ public class EmployeeController {
         employeeService.updateById(employee);
         return R.success("The information has been modified successfully");
     }
+    @GetMapping("/{id}")
+    public R<Employee> getByiD(@PathVariable Long id){
+        log.info("getById");
+        Employee employee = employeeService.getById(id);
+        if(employee != null){
+            return R.success(employee);
+        }
+        else{
+            return R.error("No such employee");
+        }
+    }
 
 }
