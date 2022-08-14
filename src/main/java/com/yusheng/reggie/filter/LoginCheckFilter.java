@@ -4,6 +4,8 @@ package com.yusheng.reggie.filter;
 //check the user if it is logined
 
 import com.alibaba.fastjson.JSON;
+import com.yusheng.reggie.common.BaseContext;
+import com.yusheng.reggie.common.MyMetaObjectHandler;
 import com.yusheng.reggie.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
@@ -51,6 +53,10 @@ public class LoginCheckFilter implements Filter {
 //        4. if have already logined
         if(request.getSession().getAttribute("employee")!=null){
             log.info("User already logined: {}", request.getSession().getAttribute("employee"));
+
+            Long emptyId = (Long)request.getSession().getAttribute("employee");
+            BaseContext.setCurrentId(emptyId);
+
             filterChain.doFilter(request,response);
             return;
         }

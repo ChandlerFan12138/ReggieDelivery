@@ -71,13 +71,13 @@ public class EmployeeController {
         log.info("add new member:{}",employee.toString());
 //        original password;
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
 
         Long empID = (Long) request.getSession().getAttribute("employee");
-        employee.setCreateUser(empID);
-
-        employee.setUpdateUser(empID);
+//        employee.setCreateUser(empID);
+//
+//        employee.setUpdateUser(empID);
 // mybatisplus method
         employeeService.save(employee);
         return R.success("add member successfully");
@@ -110,8 +110,10 @@ public class EmployeeController {
     public R<String> update(HttpServletRequest request, @RequestBody Employee employee){
 
         Long empId = (Long)request.getSession().getAttribute("employee");
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser(empId);
+//        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setUpdateUser(empId);
+
+
         employeeService.updateById(employee);
         return R.success("The information has been modified successfully");
     }
