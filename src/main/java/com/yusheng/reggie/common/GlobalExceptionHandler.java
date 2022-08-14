@@ -26,4 +26,12 @@ public class GlobalExceptionHandler {
 
         return R.error("Unknown failure");
     }
+
+
+    @ExceptionHandler(CustomException.class)
+    public R<String> ExceptionHandler(CustomException ex){
+
+        log.error(ex.getMessage());
+        return R.error(ex.getMessage());
+    }
 }
