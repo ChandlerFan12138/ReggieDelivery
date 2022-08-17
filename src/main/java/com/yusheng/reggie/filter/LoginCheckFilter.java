@@ -38,7 +38,10 @@ public class LoginCheckFilter implements Filter {
                 "/employee/login",
                 "/employee/logout",
                 "/backend/**",
-                "/front/**"
+                "/front/**",
+                "/common/**",
+                "/user/sendMsg",
+                "/user/login"
         };
 
 //        2. check the URI
@@ -56,6 +59,16 @@ public class LoginCheckFilter implements Filter {
 
             Long emptyId = (Long)request.getSession().getAttribute("employee");
             BaseContext.setCurrentId(emptyId);
+
+            filterChain.doFilter(request,response);
+            return;
+        }
+
+        if(request.getSession().getAttribute("user")!=null){
+            log.info("User already logined: {}", request.getSession().getAttribute("user"));
+
+            Long userId = (Long)request.getSession().getAttribute("user");
+            BaseContext.setCurrentId(userId);
 
             filterChain.doFilter(request,response);
             return;
