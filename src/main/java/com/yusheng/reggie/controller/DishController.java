@@ -7,9 +7,11 @@ import com.yusheng.reggie.common.R;
 import com.yusheng.reggie.dto.DishDto;
 import com.yusheng.reggie.entity.Category;
 import com.yusheng.reggie.entity.Dish;
+import com.yusheng.reggie.entity.DishFlavor;
 import com.yusheng.reggie.service.CategoryService;
 import com.yusheng.reggie.service.DishFlavorService;
 import com.yusheng.reggie.service.DishService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -83,5 +85,36 @@ public class DishController {
     public R<String> update(@RequestBody DishDto dishDto){
         dishService.UpdateWithFlavor(dishDto);
         return R.success("update successfully");
+    }
+
+    @GetMapping("/list")
+    public R<List<DishDto>> getById(Dish dish){
+
+
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(StringUtils.isNotEmpty(dish.getName()), Dish::getName, dish.getName());
+        queryWrapper.eq(null != dish.getCategoryId(), Dish::getCategoryId, dish.getCategoryId());
+
+        queryWrapper.eq(Dish::getStatus,1);
+        queryWrapper.orderByDesc(Dish::getUpdateTime);
+
+        List<Dish> dishs = dishService.list(queryWrapper);
+
+        List<DishDto> dishDtos = dishs.stream().map(item -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item, dishDto);
+            Category category = categoryService.getById(item.getCategoryId());
+            if (category != null) {
+                dishDto.setCategoryName(category.getName());
+            }
+            LambdaQueryWrapper<DishFlavor> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(DishFlavor::getDishId, item.getId());
+
+            dishDto.setFlavors(dishFlavorService.list(wrapper));
+            return dishDto;
+
+        }).collect(Collectors.toList());
+
+        return R.success(dishDtos);
     }
 }
