@@ -38,13 +38,14 @@ public class UserController {
         if(StringUtils.isNotEmpty(phone)){
             //gengerate the code with 4 numbers
             String code = ValidateCodeUtils.generateValidateCode(4).toString();
-            log.info("code={}",code);
 
             //Use the aliyun API to send message
-            SMSUtils.sendMessage("Reggie","",phone,code);
+//            SMSUtils.sendMessage("Reggie","",phone,code);
 
             //store the code in Session
-            session.setAttribute(phone,code);
+
+            session.setAttribute("phone",phone);
+            session.setAttribute("code",code);
 
             return R.success("Send successfully");
         }
@@ -69,28 +70,43 @@ public class UserController {
         //get code
         String code = map.get("code").toString();
 
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getPhone,phone);
+
+        User user = userService.getOne(queryWrapper);
+        if(user == null){
+            //decide the user if it is a new user. If it is, store it in the user table.
+            user = new User();
+            user.setPhone(phone);
+            user.setStatus(1);
+            userService.save(user);
+        }
+        session.setAttribute("user",user.getId());
+        return R.success(user);
+
+
         //get the code from the session
-        Object codeInSession = session.getAttribute(phone);
+//        Object codeInSession = session.getAttribute("phone");
 
         //Compare the code input and from the session
-        if(codeInSession != null && codeInSession.equals(code)){
-            //if successfully
-
-            LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(User::getPhone,phone);
-
-            User user = userService.getOne(queryWrapper);
-            if(user == null){
-                //decide the user if it is a new user. If it is, store it in the user table.
-                user = new User();
-                user.setPhone(phone);
-                user.setStatus(1);
-                userService.save(user);
-            }
-            session.setAttribute("user",user.getId());
-            return R.success(user);
-        }
-        return R.error("Login successfully");
+//        if(codeInSession != null && codeInSession.equals(code)){
+//            //if successfully
+//
+//            LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+//            queryWrapper.eq(User::getPhone,phone);
+//
+//            User user = userService.getOne(queryWrapper);
+//            if(user == null){
+//                //decide the user if it is a new user. If it is, store it in the user table.
+//                user = new User();
+//                user.setPhone(phone);
+//                user.setStatus(1);
+//                userService.save(user);
+//            }
+//            session.setAttribute("user",user.getId());
+//            return R.success(user);
+//        }
+//        return R.success(user);
     }
 
 }

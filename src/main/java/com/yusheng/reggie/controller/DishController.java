@@ -101,12 +101,16 @@ public class DishController {
         List<Dish> dishs = dishService.list(queryWrapper);
 
         List<DishDto> dishDtos = dishs.stream().map(item -> {
+//            step1. copy the properties of dish into dishDto
             DishDto dishDto = new DishDto();
             BeanUtils.copyProperties(item, dishDto);
+//            step2. get the category name by searching
             Category category = categoryService.getById(item.getCategoryId());
+//            step3. set the category name
             if (category != null) {
                 dishDto.setCategoryName(category.getName());
             }
+//            step4. searching and set the dishFlavour
             LambdaQueryWrapper<DishFlavor> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(DishFlavor::getDishId, item.getId());
 

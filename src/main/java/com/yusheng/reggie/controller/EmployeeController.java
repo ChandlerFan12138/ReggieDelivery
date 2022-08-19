@@ -68,6 +68,8 @@ public class EmployeeController {
 //    add new member, the RequestBody stores all the information
     @PostMapping
     public R<String> save(HttpServletRequest request,@RequestBody Employee employee){
+
+
         log.info("add new member:{}",employee.toString());
 //        original password;
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
